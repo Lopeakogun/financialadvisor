@@ -1,0 +1,6 @@
+google-adk[db]
+litellm
+yfinance
+streamlit
+python-dotenv
+ddgs

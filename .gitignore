@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+financial_advisor/.env
+.DS_Store
+
+# Personal financial data — never commit
+financial_advisor/data/
+
+# adk web's local session store (conversation history) — never commit
+financial_advisor/.adk/
+*.db
+
+# Claude Code local session/tooling state — not project source
+.claude/
