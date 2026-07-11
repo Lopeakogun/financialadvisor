@@ -16,7 +16,7 @@ from financial_advisor.dashboard_store import compute_spending_breakdown  # noqa
 from financial_advisor.dashboard_store import compute_summary as compute_dashboard_summary  # noqa: E402
 from financial_advisor.dashboard_store import load_dashboard  # noqa: E402
 from financial_advisor.dashboard_store import missing_required as dashboard_missing_required  # noqa: E402
-from financial_advisor.profile_store import DATA_DIR, PROFILE_SCHEMA, load_profile  # noqa: E402
+from financial_advisor.profile_store import DATA_DIR, load_profile  # noqa: E402
 from financial_advisor.profile_store import missing_required as profile_missing_required  # noqa: E402
 
 APP_NAME = "financial_advisor"
@@ -31,16 +31,14 @@ st.caption(
 )
 
 
-def _completion_widget(label: str, schema: dict, missing: list) -> None:
-    total_required = sum(1 for spec in schema.values() if spec["required"])
-    done = total_required - len(missing)
-    st.subheader(label)
-    st.progress(done / total_required if total_required else 1.0)
+def _completion_widget(label: str, missing: list) -> None:
+    """Only shows once a stage is complete — the chat itself carries the
+    conversational weight of onboarding, so the sidebar doesn't spoil it
+    by listing every still-unanswered question up front."""
     if missing:
-        st.caption(f"{done}/{total_required} required fields collected")
-        st.caption("Still needed: " + ", ".join(schema[f]["label"] for f in missing))
-    else:
-        st.caption("Complete.")
+        return
+    st.subheader(label)
+    st.caption("Complete.")
 
 
 profile = load_profile()
@@ -51,13 +49,14 @@ profile_missing = profile_missing_required(profile)
 USER_ID = profile.get("name") or "guest"
 
 with st.sidebar:
-    _completion_widget("Your profile", PROFILE_SCHEMA, profile_missing)
+    _completion_widget("Your profile", profile_missing)
 
     if not profile_missing:
-        st.divider()
         dashboard = load_dashboard()
         dash_missing = dashboard_missing_required(dashboard)
-        _completion_widget("Financial dashboard", DASHBOARD_SCHEMA, dash_missing)
+        if not dash_missing:
+            st.divider()
+        _completion_widget("Financial dashboard", dash_missing)
 
         if not dash_missing:
             summary = compute_dashboard_summary(dashboard)

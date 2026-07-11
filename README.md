@@ -46,8 +46,10 @@ financial_advisor/
     market_research/
       market_research_agent.py  ticker + broad-market lookups (uses market tools)
 streamlit_app.py                chat UI wrapping an ADK Runner + DatabaseSessionService (persistent, SQLite-
-                                 backed, keyed by the saved profile name), with a sidebar showing
-                                 profile/dashboard completion and computed metrics
+                                 backed, keyed by the saved profile name). Sidebar stays empty during
+                                 onboarding (the chat itself asks the questions — no point spoiling them
+                                 in a "still needed" list on the side) and only appears once a stage
+                                 completes, showing computed dashboard metrics
 ```
 
 Note the sub-agent files are named `<name>_agent.py`, not `agent.py` — `adk web`'s
